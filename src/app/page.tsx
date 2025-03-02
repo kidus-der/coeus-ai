@@ -1,5 +1,4 @@
 "use client";
-import { useState, useCallback } from 'react';
 import { Header } from "@/components/Header";
 import { PdfViewer } from "@/components/PDFViewer/PDFViewer";
 import { ThemeProvider } from "@/components/theme-provider";
