@@ -3,8 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { SunIcon, MoonIcon } from "@/components/Icons";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 export function Header() {
   const { setTheme, theme } = useTheme(); //For dark mode
@@ -30,38 +28,31 @@ export function Header() {
         </Link>
 
         {/* Navigation Links and Toggle (Center) */}
-        <nav className="flex items-center justify-center flex-1">
-          <ul className="flex items-center space-x-4 border rounded-full py-2 px-4">
-            <li>
-                <Link
-                  href="/"
-                  className="text-foreground transition-all hover:scale-115 duration-500 ease px-1 py-1 transform-origin-center"
-                >
-                  Home
-                </Link>
-            </li>
-            <li>
-                <Link
-                  href="/about"
-                  className="text-foreground transition-all hover:scale-115 duration-500 ease px-1 py-1 transform-origin-center"
-                >
-                  About
-                </Link>
-            </li>
-            <li>
-                <Link
-                  href="/contact"
-                  className="text-foreground transition-all hover:scale-115 duration-500 ease px-1 py-1 transform-origin-center"
-                >
-                  Contact
-                </Link>
-            </li>
-            <li>
+        <nav className="flex items-center justify-center flex-1 border border-solid border-dark rounded-full py-2 px-8 
+      font-medium capitalize fixed top-1 bottom-1 right-1/2 translate-x-1/2
+      bg-light/80 backdrop-blur-sm z-50">
+              <Link
+                href="/"
+                className="mr-2 text-foreground transition-transform hover:scale-110 duration-300 ease-in-out px-1 py-1"
+              >
+                Home
+              </Link>
+              <Link
+                href="/about"
+                className="mr-2 text-foreground transition-transform hover:scale-110 duration-300 ease-in-out px-1 py-1"
+              >
+                About
+              </Link>
+              <Link
+                href="/contact"
+                className="mx-2 text-foreground transition-transform hover:scale-110 duration-300 ease-in-out px-1 py-1"
+              >
+                Contact
+              </Link>
               {/* Dark Mode Toggle (Moved Here) */}
-              <Button
-                size="icon"
+              <button
                 onClick={toggleTheme}
-                className="hover:scale-115 transition-all duration-300 ease"
+                className="text-foreground transition-transform hover:scale-110 duration-300 ease-in-out p-1"
               >
                 {theme === "dark" ? (
                   <SunIcon className="h-[1.2rem] w-[1.2rem]" />
@@ -69,9 +60,7 @@ export function Header() {
                   <MoonIcon className="h-[1.2rem] w-[1.2rem]" />
                 )}
                 <span className="sr-only">Toggle theme</span>
-              </Button>
-            </li>
-          </ul>
+              </button>
         </nav>
       </div>
     </header>
