@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { PdfViewer } from "@/components/PDFViewer/PDFViewer";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -12,7 +12,7 @@ import { ChatInput } from "@/components/ui/chat/chat-input";
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
 import { CornerDownLeft } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Copy, RefreshCcw, SunIcon, MoonIcon } from "@/components/Icons"
+import { Copy, RefreshCcw } from "@/components/Icons"
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
@@ -24,7 +24,6 @@ export default function Home() {
     },
   ]);
 
-  const [minHeight, setMinHeight] = useState<number | null>(500); // What is this used for??
   const actionIcons = [
   { icon: Copy, type: 'Copy' },
   { icon: RefreshCcw, type: 'Regenerate' },
