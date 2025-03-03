@@ -42,10 +42,16 @@ export default function Home() {
       setMessages((prevMessages) => [
         ...prevMessages,
         {
-          id: prevMessages.length + 2,
+          id: prevMessages.length + 1,
           message: "This is a simulated bot response. To test autoscroll, make sure there are many words, like apple banana cherry date eggplant fig grape honeydew",
           sender: "bot",
           //isLoading: true,
+        },
+        {
+          id: prevMessages.length + 3,
+          message: "",
+          sender: "bot",
+          isLoading: true,
         },
       ]);
     }, 1000); // Simulate a 1-second delay
