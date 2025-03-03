@@ -1,4 +1,3 @@
-// src/components/PdfViewer/PdfViewer.tsx
 "use client";
 import { useState, useCallback } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -81,7 +80,7 @@ export function PdfViewer({}: PdfViewerProps) {
     <div className="flex flex-col h-full w-full">
       {/* Display upload UI or PDF based on selectedFile */}
       {!selectedFile ? (
-        <div {...getRootProps()} className={cn("flex-grow border-2 border-dashed rounded-md p-6 text-center cursor-pointer", isDragActive ? "border-primary" : "border-muted")}>
+        <div {...getRootProps()} className={cn("grow border-2 border-dashed rounded-md p-6 text-center cursor-pointer", isDragActive ? "border-primary" : "border-muted")}>
           <input {...getInputProps()} />
            {fileError && (
             <Alert variant="destructive">
@@ -100,7 +99,7 @@ export function PdfViewer({}: PdfViewerProps) {
       ) : (
         <>
           {/* PDF Document Container  */}
-          <div className="flex-grow border rounded-lg overflow-hidden">
+          <div className="grow border rounded-lg overflow-hidden">
             <ScrollArea className="h-[75vh] w-full">
               <Document
                 file={selectedFile}

@@ -13,7 +13,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
       <div className="container flex h-16 items-center">
         {/* Logo and App Name (Left) */}
         <Link href="/" className="flex items-center gap-2 mr-6">
@@ -30,7 +30,7 @@ export function Header() {
         {/* Navigation Links and Toggle (Center) */}
         <nav className="flex items-center justify-center flex-1 border border-solid border-dark rounded-full py-2 px-8 
       font-medium capitalize fixed top-1 bottom-1 right-1/2 translate-x-1/2
-      bg-light/80 backdrop-blur-sm z-50">
+      bg-light/80 backdrop-blur-xs z-50">
               <Link
                 href="/"
                 className="mr-2 text-foreground transition-transform hover:scale-110 duration-300 ease-in-out px-1 py-1"
@@ -39,13 +39,13 @@ export function Header() {
               </Link>
               <Link
                 href="/about"
-                className="mr-2 text-foreground transition-transform hover:scale-110 duration-300 ease-in-out px-1 py-1"
+                className="mr-2 ml-2 text-foreground transition-transform hover:scale-110 duration-300 ease-in-out px-1 py-1"
               >
                 About
               </Link>
               <Link
                 href="/contact"
-                className="mx-2 text-foreground transition-transform hover:scale-110 duration-300 ease-in-out px-1 py-1"
+                className="mx-2 ml-2 text-foreground transition-transform hover:scale-110 duration-300 ease-in-out px-1 py-1"
               >
                 Contact
               </Link>
