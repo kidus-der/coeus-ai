@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { PdfViewer } from "@/components/PDFViewer/PDFViewer";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Button } from "@/components/ui/button";
 import {
   ChatBubble,
   ChatBubbleAvatar,
@@ -13,6 +12,8 @@ import { ChatInput } from "@/components/ui/chat/chat-input";
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
 import { CornerDownLeft } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Copy, RefreshCcw, SunIcon, MoonIcon } from "@/components/Icons"
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -23,14 +24,30 @@ export default function Home() {
     },
   ]);
 
-  const [minHeight, setMinHeight] = useState<number | null>(500);
+  const [minHeight, setMinHeight] = useState<number | null>(500); // What is this used for??
+  const actionIcons = [
+  { icon: Copy, type: 'Copy' },
+  { icon: RefreshCcw, type: 'Regenerate' },
+];
 
   const sendMessage = (newMessage: string) => {
-    // Basic implementation, you'll connect this to the AI later
-    setMessages([
-      ...messages,
-      { id: messages.length + 1, message: newMessage, sender: "user" },
+    // Add the user's message immediately
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { id: prevMessages.length + 1, message: newMessage, sender: "user" },
     ]);
+
+    // Simulate a delayed "bot" response
+    setTimeout(() => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: prevMessages.length + 2,
+          message: "This is a simulated bot response. To test autoscroll, make sure there are many words, like apple banana cherry date eggplant fig grape honeydew",
+          sender: "bot",
+        },
+      ]);
+    }, 1000); // Simulate a 1-second delay
   };
 
 
@@ -57,12 +74,25 @@ export default function Home() {
               {messages.map((message) => {
                 const variant = message.sender === "user" ? "sent" : "received";
                 return (
-                  <ChatBubble key={message.id} variant={variant}>
+                  <ChatBubble key={message.id} layout='ai'>
                     <ChatBubbleAvatar
                       fallback={variant === "sent" ? "US" : "AI"}
                     />
                     <ChatBubbleMessage isLoading={message.isLoading}>
-                      {message.message}
+                        {message.message}
+                         {message.sender === 'bot' && (
+                        <div className="flex items-center space-x-2 mt-1"> {/* Added flex container */}
+                          {actionIcons.map(({ icon: Icon, type }) => (
+                           <span // Changed from Button to span
+                              key={type}
+                              onClick={() => console.log('Action ' + type + ' clicked for message ' + message.id)}
+                              className="cursor-pointer hover:text-primary transition-colors duration-200" // Added styling
+                            >
+                            <Icon className="size-4 inline-block" /> {/* Added inline-block */}
+                            </span> // Changed from Button to span
+                          ))}
+                        </div>
+                      )}
                     </ChatBubbleMessage>
                   </ChatBubble>
                 );

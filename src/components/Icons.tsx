@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Copy, RefreshCcw } from 'lucide-react'; // Import the icons
 
 interface IconProps {
     classname?: string;
@@ -339,3 +340,6 @@ export const MoonIcon = ({ className, ...rest }: IconProps) => (
         </circle>
     </svg>
 );
+
+export { Copy };
+export { RefreshCcw };
