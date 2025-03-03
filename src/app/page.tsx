@@ -14,6 +14,7 @@ import { CornerDownLeft } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Copy, RefreshCcw } from "@/components/Icons"
 import { Button } from "@/components/ui/button";
+import { Toolbox } from "@/components/Toolbox";
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -44,6 +45,7 @@ export default function Home() {
           id: prevMessages.length + 2,
           message: "This is a simulated bot response. To test autoscroll, make sure there are many words, like apple banana cherry date eggplant fig grape honeydew",
           sender: "bot",
+          //isLoading: true,
         },
       ]);
     }, 1000); // Simulate a 1-second delay
@@ -133,6 +135,9 @@ export default function Home() {
                 Send Message
                 <CornerDownLeft className="size-3.5" />
               </Button>
+
+             
+              <Toolbox /> {/* Call the Toolbox component */}
             </div>
           </form>
         </div>

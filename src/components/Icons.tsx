@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Copy, RefreshCcw } from 'lucide-react'; // Import the icons
+import { Copy, RefreshCcw , Sparkles , GraduationCap, Brain, BicepsFlexed } from 'lucide-react'; // Import the icons
 
 interface IconProps {
     classname?: string;
@@ -343,3 +343,8 @@ export const MoonIcon = ({ className, ...rest }: IconProps) => (
 
 export { Copy };
 export { RefreshCcw };
+
+export { GraduationCap}; //study plan
+export { Sparkles }; // quick summary
+export { Brain }; // detailed explanation
+export { BicepsFlexed }; // practice questions
