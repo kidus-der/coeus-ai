@@ -133,6 +133,8 @@ export default function Home() {
               }}
             />
             <div className="flex items-center p-3 pt-0">
+
+              <Toolbox /> {/* Call the Toolbox component */}
               <Button
                 size="sm"
                 className="ml-auto gap-1.5"
@@ -142,8 +144,7 @@ export default function Home() {
                 <CornerDownLeft className="size-3.5" />
               </Button>
 
-             
-              <Toolbox /> {/* Call the Toolbox component */}
+            
             </div>
           </form>
         </div>
