@@ -46,7 +46,7 @@ export function PdfViewer({}: PdfViewerProps) {
     );
   };
 
-  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 5MB
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
