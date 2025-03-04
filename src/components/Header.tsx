@@ -18,10 +18,10 @@ export function Header() {
         {/* Logo and App Name (Left) */}
         <Link href="/" className="flex items-center gap-2 mr-6">
           <Image
-            src="/coeus-logo-noname.svg"
+            src="/coeus-logo-dark-mode.svg"
             alt="Coeus AI Logo"
-            width={40}
-            height={40}
+            width={50}
+            height={50}
             className="rounded-full" // Make it a circle
           />
           <span className="font-bold text-lg">Coeus</span>
