@@ -16,6 +16,7 @@ import { FilePlus } from 'lucide-react';
 import { cn } from "@/lib/utils"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert" //New Alert component
 import { AlertCircle } from "lucide-react"
+import { toast } from "sonner"
 
 // Set the workerSrc (required by react-pdf)
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -73,7 +74,7 @@ export function PdfViewer({}: PdfViewerProps) {
 
   const handleError = (error: any) => {
     console.error("Error loading PDF:", error);
-    setFileError("Failed to load PDF. Please ensure it is a valid PDF file.");
+    toast("Uh oh! Something went wrong. Failed to load PDF. Please ensure it is a valid PDF file.");
   };
 
   return (
