@@ -1,8 +1,8 @@
 "use client";
-import { useState, useCallback } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+import { useState, useCallback } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 import {
   Pagination,
   PaginationContent,
@@ -11,34 +11,42 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useDropzone } from 'react-dropzone';
-import { FilePlus } from 'lucide-react';
-import { cn } from "@/lib/utils"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert" //New Alert component
-import { AlertCircle } from "lucide-react"
-import { toast } from "sonner"
+import { useDropzone } from "react-dropzone";
+import { FilePlus } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 
-// Set the workerSrc (required by react-pdf)
+// set the workerSrc (required by react-pdf)
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.mjs',
-    import.meta.url,
-  ).toString();
-  
-interface PdfViewerProps {}
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
 
-export function PdfViewer({}: PdfViewerProps) {
+interface PdfViewerProps {
+  onPdfUpload?: (pdfData: { name: string; base64: string }) => void;
+}
+
+export function PdfViewer({ onPdfUpload }: PdfViewerProps) {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
 
-  function onDocumentLoadSuccess({ numPages: nextNumPages }: { numPages: number }) {
+  function onDocumentLoadSuccess({
+    numPages: nextNumPages,
+  }: {
+    numPages: number;
+  }) {
     setNumPages(nextNumPages);
     setPageNumber(1);
   }
 
   const goToPrevPage = () => {
-    setPageNumber((prevPageNumber) => (prevPageNumber > 1 ? prevPageNumber - 1 : 1));
+    setPageNumber((prevPageNumber) =>
+      prevPageNumber > 1 ? prevPageNumber - 1 : 1
+    );
   };
 
   const goToNextPage = () => {
@@ -49,47 +57,88 @@ export function PdfViewer({}: PdfViewerProps) {
 
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
 
-    if (file.size > MAX_FILE_SIZE) {
-      setFileError(`File size exceeds the limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB.`);
-      setSelectedFile(null);
-      return;
-    }
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError(
+          `File size exceeds the limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB.`
+        );
+        setSelectedFile(null);
+        return;
+      }
 
-    setFileError(null); // Clear any previous error
-    setSelectedFile(file);
-    setPageNumber(1);
-  }, []);
+      setFileError(null); // clear any previous error
+      setSelectedFile(file);
+      setPageNumber(1);
+
+      // upload PDF to our API
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch("/api/upload-pdf", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to upload PDF");
+        }
+
+        const data = await response.json();
+
+        // pass the PDF data to the parent component if the callback exists
+        if (onPdfUpload && data.success) {
+          onPdfUpload({
+            name: data.name,
+            base64: data.base64,
+          });
+        }
+      } catch (error) {
+        console.error("Error uploading PDF:", error);
+        toast("Error uploading PDF. Please try again.");
+      }
+    },
+    [onPdfUpload]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'application/pdf': ['.pdf'],
+      "application/pdf": [".pdf"],
     },
     maxFiles: 1,
-    disabled: !!selectedFile
+    disabled: !!selectedFile,
   });
 
   const handleError = (error: any) => {
     console.error("Error loading PDF:", error);
-    toast("Uh oh! Something went wrong. Failed to load PDF. Please ensure it is a valid PDF file.");
+    toast(
+      "Uh oh! Something went wrong. Failed to load PDF. Please ensure it is a valid PDF file."
+    );
   };
 
   return (
     <div className="flex flex-col h-full w-full">
       {/* Display upload UI or PDF based on selectedFile */}
       {!selectedFile ? (
-        <div {...getRootProps()} className={cn("grow border-2 border-dashed rounded-md p-6 text-center cursor-pointer", isDragActive ? "border-primary" : "border-muted")}>
+        <div
+          {...getRootProps()}
+          className={cn(
+            "grow border-2 border-dashed rounded-md p-6 text-center cursor-pointer",
+            isDragActive ? "border-primary" : "border-muted"
+          )}
+        >
           <input {...getInputProps()} />
-           {fileError && (
+          {fileError && (
             <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{fileError}</AlertDescription>
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{fileError}</AlertDescription>
             </Alert>
-            )}
+          )}
           <>
             <FilePlus className="mx-auto h-12 w-12 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
@@ -99,7 +148,7 @@ export function PdfViewer({}: PdfViewerProps) {
         </div>
       ) : (
         <>
-          {/* PDF Document Container  */}
+          {/* PDF Document Container */}
           <div className="grow border rounded-lg overflow-hidden">
             <ScrollArea className="h-[75vh] w-full">
               <Document
@@ -107,7 +156,11 @@ export function PdfViewer({}: PdfViewerProps) {
                 onLoadSuccess={onDocumentLoadSuccess}
                 onLoadError={handleError}
               >
-                <Page pageNumber={pageNumber} renderAnnotationLayer={false} renderTextLayer={false} />
+                <Page
+                  pageNumber={pageNumber}
+                  renderAnnotationLayer={false}
+                  renderTextLayer={false}
+                />
               </Document>
             </ScrollArea>
           </div>
@@ -127,7 +180,9 @@ export function PdfViewer({}: PdfViewerProps) {
                     />
                   </PaginationItem>
                   <PaginationItem>
-                    <span>{pageNumber} / {numPages}</span>
+                    <span>
+                      {pageNumber} / {numPages}
+                    </span>
                   </PaginationItem>
                   <PaginationItem>
                     <PaginationNext
