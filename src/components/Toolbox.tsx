@@ -1,11 +1,10 @@
-// src/components/Toolbox.tsx
 import * as React from "react";
 import {
   GraduationCap,
   Sparkles,
   Brain,
   BicepsFlexed,
-} from "@/components/Icons"; // Replace with proper icon files
+} from "@/components/Icons";
 import {
   Tooltip,
   TooltipContent,
@@ -14,7 +13,11 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 
-export function Toolbox() {
+interface ToolboxProps {
+  onToolClick?: (toolType: string) => void;
+}
+
+export function Toolbox({ onToolClick }: ToolboxProps) {
   return (
     <div className="flex space-x-2">
       <TooltipProvider>
@@ -24,6 +27,7 @@ export function Toolbox() {
               variant="ghost"
               size="icon"
               aria-label="Generate Study Plan"
+              onClick={() => onToolClick?.("studyPlan")}
             >
               <GraduationCap className="size-4" />
             </Button>
@@ -38,6 +42,7 @@ export function Toolbox() {
               variant="ghost"
               size="icon"
               aria-label="Generate a Quick Summary"
+              onClick={() => onToolClick?.("quickSummary")}
             >
               <Sparkles className="size-4" />
             </Button>
@@ -52,6 +57,7 @@ export function Toolbox() {
               variant="ghost"
               size="icon"
               aria-label="Generate a Detailed Explanation"
+              onClick={() => onToolClick?.("detailedExplanation")}
             >
               <Brain className="size-4" />
             </Button>
@@ -66,6 +72,7 @@ export function Toolbox() {
               variant="ghost"
               size="icon"
               aria-label="Generate Practice Questions"
+              onClick={() => onToolClick?.("practiceQuestions")}
             >
               <BicepsFlexed className="size-4" />
             </Button>
