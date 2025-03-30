@@ -89,8 +89,22 @@ export default function Home() {
     setInput("");
     setIsLoading(true);
     
+    // Create a unique ID for the assistant message
+    const assistantMessageId = `assistant-${Date.now()}`;
+    
+    // Add an initial loading message from the assistant
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        id: assistantMessageId,
+        role: "assistant",
+        content: "",
+        isLoading: true,
+      },
+    ]);
+    
     try {
-      // call API
+      // call API with streaming
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -106,29 +120,70 @@ export default function Home() {
         throw new Error(`API request failed with status ${response.status}`);
       }
       
-      const data = await response.json();
+      // Process the streaming response
+      const reader = response.body.getReader();
+      let accumulatedContent = "";
       
-      // add assistant response
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: `assistant-${Date.now()}`,
-          role: "assistant",
-          content: data.response || "I'm sorry, I couldn't process your request.",
-        },
-      ]);
+      // Update the loading state to false but keep the empty content
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === assistantMessageId
+            ? { ...msg, isLoading: false }
+            : msg
+        )
+      );
+      
+      // Read and process chunks as they arrive
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) {
+          break;
+        }
+        
+        // Convert the chunk to text
+        const chunk = new TextDecoder().decode(value);
+        
+        // Process each line in the chunk (there might be multiple JSON objects)
+        const lines = chunk.split("\n").filter(line => line.trim());
+        
+        for (const line of lines) {
+          try {
+            const { chunk: chunkText } = JSON.parse(line);
+            
+            if (chunkText) {
+              // Accumulate the content
+              accumulatedContent += chunkText;
+              
+              // Update the message with the accumulated content
+              setMessages((prevMessages) =>
+                prevMessages.map((msg) =>
+                  msg.id === assistantMessageId
+                    ? { ...msg, content: accumulatedContent }
+                    : msg
+                )
+              );
+            }
+          } catch (e) {
+            console.error("Error parsing chunk:", e, line);
+          }
+        }
+      }
     } catch (error) {
       console.error("Error sending message:", error);
       
-      // add error message
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: `error-${Date.now()}`,
-          role: "assistant",
-          content: "I'm sorry, I encountered an error. Please try again.",
-        },
-      ]);
+      // Update the assistant message to show the error
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === assistantMessageId
+            ? {
+                ...msg,
+                content: "I'm sorry, I encountered an error. Please try again.",
+                isLoading: false,
+              }
+            : msg
+        )
+      );
       
       toast.error("Failed to get a response. Please try again.");
     } finally {
@@ -162,8 +217,22 @@ export default function Home() {
       return;
     }
     
+    // Create a unique ID for the assistant message
+    const assistantMessageId = `tool-response-${Date.now()}`;
+    
+    // Add an initial loading message from the assistant
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        id: assistantMessageId,
+        role: "assistant",
+        content: "",
+        isLoading: true,
+      },
+    ]);
+    
     try {
-      // call API
+      // call API with streaming
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -179,29 +248,70 @@ export default function Home() {
         throw new Error(`API request failed with status ${response.status}`);
       }
       
-      const data = await response.json();
+      // Process the streaming response
+      const reader = response.body.getReader();
+      let accumulatedContent = "";
       
-      // add assistant response
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: `tool-response-${Date.now()}`,
-          role: "assistant",
-          content: data.response || "I'm sorry, I couldn't process your request.",
-        },
-      ]);
+      // Update the loading state to false but keep the empty content
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === assistantMessageId
+            ? { ...msg, isLoading: false }
+            : msg
+        )
+      );
+      
+      // Read and process chunks as they arrive
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) {
+          break;
+        }
+        
+        // Convert the chunk to text
+        const chunk = new TextDecoder().decode(value);
+        
+        // Process each line in the chunk (there might be multiple JSON objects)
+        const lines = chunk.split("\n").filter(line => line.trim());
+        
+        for (const line of lines) {
+          try {
+            const { chunk: chunkText } = JSON.parse(line);
+            
+            if (chunkText) {
+              // Accumulate the content
+              accumulatedContent += chunkText;
+              
+              // Update the message with the accumulated content
+              setMessages((prevMessages) =>
+                prevMessages.map((msg) =>
+                  msg.id === assistantMessageId
+                    ? { ...msg, content: accumulatedContent }
+                    : msg
+                )
+              );
+            }
+          } catch (e) {
+            console.error("Error parsing chunk:", e, line);
+          }
+        }
+      }
     } catch (error) {
       console.error("Error using toolbox:", error);
       
-      // add error message
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: `tool-error-${Date.now()}`,
-          role: "assistant",
-          content: "I'm sorry, I encountered an error while generating content. Please try again.",
-        },
-      ]);
+      // Update the assistant message to show the error
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === assistantMessageId
+            ? {
+                ...msg,
+                content: "I'm sorry, I encountered an error while generating content. Please try again.",
+                isLoading: false,
+              }
+            : msg
+        )
+      );
       
       toast.error("Failed to generate content. Please try again.");
     } finally {
