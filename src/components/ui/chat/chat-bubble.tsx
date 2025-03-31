@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import MessageLoading from "./message-loading";
 import { Button, ButtonProps } from "../button";
+import { MarkdownRenderer } from "./markdown-renderer";
 
 // ChatBubble
 const chatBubbleVariant = cva(
@@ -103,24 +104,32 @@ const ChatBubbleMessage = React.forwardRef<
   (
     { className, variant, layout, isLoading = false, children, ...props },
     ref,
-  ) => (
-    <div
-      className={cn(
-        chatBubbleMessageVariants({ variant, layout, className }),
-        "break-words max-w-full whitespace-pre-wrap",
-      )}
-      ref={ref}
-      {...props}
-    >
-      {isLoading ? (
-        <div className="flex items-center space-x-2">
-          <MessageLoading />
-        </div>
-      ) : (
-        children
-      )}
-    </div>
-  ),
+  ) => {
+    return (
+      <div
+        className={cn(
+          chatBubbleMessageVariants({ variant, layout, className }),
+          "break-words max-w-full"
+        )}
+        ref={ref}
+        {...props}
+      >
+        {isLoading ? (
+          <div className="flex items-center space-x-2">
+            <MessageLoading />
+          </div>
+        ) : (
+          // Process children to render markdown for string content
+          React.Children.map(children, (child) => {
+            if (typeof child === 'string') {
+              return <MarkdownRenderer content={child} />;
+            }
+            return child;
+          })
+        )}
+      </div>
+    );
+  },
 );
 ChatBubbleMessage.displayName = "ChatBubbleMessage";
 
