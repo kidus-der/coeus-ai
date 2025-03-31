@@ -65,19 +65,31 @@ export default function Home() {
     }
   }, [messages]);
   
-  // handle PDF upload
+  // handle PDF upload or removal
   const handlePdfUpload = (data) => {
     setPdfData(data);
     
-    // add a welcome message
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      {
-        id: `pdf-welcome-${Date.now()}`,
-        role: "assistant",
-        content: `I've processed your document "${data.name}". You can ask me questions about it or use the toolbox buttons below to generate specific content.`,
-      },
-    ]);
+    if (data === null) {
+      // PDF was removed, add a message indicating this
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: `pdf-removed-${Date.now()}`,
+          role: "assistant",
+          content: "The PDF has been removed. Please upload a new document to continue.",
+        },
+      ]);
+    } else {
+      // PDF was uploaded, add a welcome message
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: `pdf-welcome-${Date.now()}`,
+          role: "assistant",
+          content: `I've processed your document "${data.name}". You can ask me questions about it or use the toolbox buttons below to generate specific content.`,
+        },
+      ]);
+    }
   };
   
   // handle sending a message

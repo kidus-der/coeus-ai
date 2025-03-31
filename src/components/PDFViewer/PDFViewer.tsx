@@ -12,11 +12,12 @@ import {
 } from "@/components/ui/pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDropzone } from "react-dropzone";
-import { FilePlus } from "lucide-react";
+import { FilePlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 // set the workerSrc (required by react-pdf)
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -112,6 +113,20 @@ export function PdfViewer({ onPdfUpload }: PdfViewerProps) {
     maxFiles: 1,
     disabled: !!selectedFile,
   });
+  
+  const handleRemovePdf = () => {
+    setSelectedFile(null);
+    setNumPages(null);
+    setPageNumber(1);
+    setFileError(null);
+    
+    // Notify the parent component that the PDF has been removed
+    if (onPdfUpload) {
+      onPdfUpload(null);
+    }
+    
+    toast("PDF removed. You can now upload a new PDF document.");
+  };
 
   const handleError = (error: any) => {
     console.error("Error loading PDF:", error);
@@ -149,7 +164,7 @@ export function PdfViewer({ onPdfUpload }: PdfViewerProps) {
       ) : (
         <>
           {/* PDF Document Container */}
-          <div className="grow border rounded-lg overflow-hidden">
+          <div className="grow border rounded-lg overflow-hidden relative">
             <ScrollArea className="h-[75vh] w-full">
               <Document
                 file={selectedFile}
@@ -166,7 +181,7 @@ export function PdfViewer({ onPdfUpload }: PdfViewerProps) {
           </div>
           {/* Bottom Pagination */}
           {numPages && (
-            <div className="flex justify-center items-center pt-2 pb-1">
+            <div className="flex justify-between items-center pt-2 pb-1">
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
@@ -196,6 +211,14 @@ export function PdfViewer({ onPdfUpload }: PdfViewerProps) {
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
+              <Button  
+                size="sm" 
+                onClick={handleRemovePdf}
+                className="flex items-center gap-1"
+              >
+                <X className="h-4 w-4" />
+                Remove PDF
+              </Button>
             </div>
           )}
         </>
