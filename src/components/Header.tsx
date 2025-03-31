@@ -3,20 +3,37 @@ import Link from "next/link";
 import Image from "next/image";
 import { SunIcon, MoonIcon } from "@/components/Icons";
 import { useTheme } from "next-themes";
+import { useSession, signOut } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { User } from "lucide-react";
 
 export function Header() {
   const { setTheme, theme } = useTheme(); //For dark mode
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated";
 
   const toggleTheme = () => {
     //For dark mode
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/" });
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
-      <div className="container flex h-16 items-center">
+      <div className="container flex h-16 items-center justify-between">
         {/* Logo and App Name (Left) */}
-        <Link href="/" className="flex items-center gap-2 mr-6">
+        <Link href="/" className="flex items-center gap-2">
           <Image
             src="/coeus-logo-dark-mode.svg"
             alt="Coeus AI Logo"
@@ -27,9 +44,9 @@ export function Header() {
           <span className="font-bold text-lg">Coeus</span>
         </Link>
 
-        {/* Navigation Links and Toggle (Center) */}
+        {/* Navigation Links (Center) */}
         <nav
-          className="flex items-center justify-center flex-1 border border-solid border-dark rounded-full py-2 px-8 
+          className="flex items-center justify-center border border-solid border-dark rounded-full py-2 px-8 
       font-medium capitalize fixed top-1 bottom-1 right-1/2 translate-x-1/2
       bg-light/80 backdrop-blur-xs z-50"
         >
@@ -51,10 +68,11 @@ export function Header() {
           >
             Contact
           </Link>
-          {/* Dark Mode Toggle (Moved Here) */}
+          
+          {/* Dark Mode Toggle */}
           <button
             onClick={toggleTheme}
-            className="text-foreground transition-transform hover:scale-110 duration-300 ease-in-out p-1"
+            className="text-foreground transition-transform hover:scale-110 duration-300 ease-in-out p-1 ml-2"
           >
             {theme === "dark" ? (
               <SunIcon className="h-[1.2rem] w-[1.2rem]" />
@@ -64,6 +82,38 @@ export function Header() {
             <span className="sr-only">Toggle theme</span>
           </button>
         </nav>
+        
+        {/* User Authentication Dropdown (Right) */}
+        <div className="flex items-center">
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="rounded-full h-8 w-8 p-0">
+                  <User className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>
+                  {session?.user?.name || session?.user?.email}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/profile">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/auth/login">Sign in</Link>
+              </Button>
+              <Button variant="default" size="sm" asChild>
+                <Link href="/auth/register">Sign up</Link>
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
