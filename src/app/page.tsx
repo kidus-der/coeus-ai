@@ -30,6 +30,12 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   isLoading?: boolean;
+  // Store original prompt data for regeneration
+  promptData?: {
+    message?: string;
+    toolType?: string;
+    pdfData?: any;
+  };
 }
 
 export default function Home() {
@@ -100,6 +106,10 @@ export default function Home() {
         role: "assistant",
         content: "",
         isLoading: true,
+        promptData: {
+          message: input,
+          pdfData: pdfData
+        }
       },
     ]);
     
@@ -228,6 +238,10 @@ export default function Home() {
         role: "assistant",
         content: "",
         isLoading: true,
+        promptData: {
+          toolType: toolType,
+          pdfData: pdfData
+        }
       },
     ]);
     
@@ -328,8 +342,139 @@ export default function Home() {
           .catch(() => toast.error("Failed to copy to clipboard"));
         break;
       case "Regenerate":
-        // For now, just show a toast. We'll implement regeneration functionality later
-        toast.info("Regenerate feature is coming soon");
+        // Find the message to regenerate
+        const messageToRegenerate = messages.find(msg => msg.id === messageId);
+        
+        // Check if we have the original prompt data
+        if (messageToRegenerate && messageToRegenerate.promptData) {
+          // Create a new message ID for the regenerated response
+          const regeneratedMessageId = `regenerated-${Date.now()}`;
+          
+          // Replace the current message with a loading message
+          setMessages(prevMessages => 
+            prevMessages.map(msg => 
+              msg.id === messageId ? {
+                ...msg,
+                id: regeneratedMessageId,
+                content: "",
+                isLoading: true
+              } : msg
+            )
+          );
+          
+          setIsLoading(true);
+          
+          // Call the API with the same prompt data
+          (async () => {
+            try {
+              const { message, toolType, pdfData } = messageToRegenerate.promptData;
+              
+              // Determine which API call to make based on the prompt data
+              const apiRequestBody = toolType 
+                ? { toolType, pdfData } 
+                : { message, pdfData };
+              
+              const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(apiRequestBody),
+              });
+              
+              if (!response.ok) {
+                throw new Error(`API request failed with status ${response.status}`);
+              }
+              
+              // Process the streaming response
+              const reader = response.body.getReader();
+              let accumulatedContent = "";
+              
+              // Update the loading state to false but keep the empty content
+              setMessages(prevMessages =>
+                prevMessages.map(msg =>
+                  msg.id === regeneratedMessageId
+                    ? { 
+                        ...msg, 
+                        content: accumulatedContent,
+                        promptData: messageToRegenerate.promptData // Preserve the original promptData
+                      }
+                    : msg
+                )
+              );
+              
+              // Read and process chunks as they arrive
+              while (true) {
+                const { done, value } = await reader.read();
+                
+                if (done) {
+                  // Set isLoading to false when streaming is complete
+                  setMessages(prevMessages =>
+                    prevMessages.map(msg =>
+                      msg.id === regeneratedMessageId
+                        ? { 
+                            ...msg, 
+                            content: accumulatedContent,
+                            isLoading: false 
+                          }
+                        : msg
+                    )
+                  );
+                  break;
+                }
+                
+                // Convert the chunk to text
+                const chunk = new TextDecoder().decode(value);
+                
+                // Process each line in the chunk (there might be multiple JSON objects)
+                const lines = chunk.split("\n").filter(line => line.trim());
+                
+                for (const line of lines) {
+                  try {
+                    const { chunk: chunkText } = JSON.parse(line);
+                    
+                    if (chunkText) {
+                      // Accumulate the content
+                      accumulatedContent += chunkText;
+                      
+                      // Update the message with the accumulated content
+                      setMessages(prevMessages =>
+                        prevMessages.map(msg =>
+                          msg.id === regeneratedMessageId
+                            ? { ...msg, content: accumulatedContent, isLoading: false }
+                            : msg
+                        )
+                      );
+                    }
+                  } catch (e) {
+                    console.error("Error parsing chunk:", e, line);
+                  }
+                }
+              }
+            } catch (error) {
+              console.error("Error regenerating message:", error);
+              
+              // Update the message to show the error
+              setMessages(prevMessages =>
+                prevMessages.map(msg =>
+                  msg.id === regeneratedMessageId
+                    ? {
+                        ...msg,
+                        content: "I'm sorry, I encountered an error while regenerating the response. Please try again.",
+                        isLoading: false,
+                      }
+                    : msg
+                )
+              );
+              
+              toast.error("Failed to regenerate response. Please try again.");
+            } finally {
+              setIsLoading(false);
+            }
+          })();
+        } else {
+          toast.error("Cannot regenerate this message. Original prompt data is missing.");
+        }
         break;
       default:
         break;
