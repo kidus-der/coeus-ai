@@ -45,18 +45,42 @@ export async function POST(req: NextRequest) {
       });
     }
     
-    console.log("Calling Gemini API...");
+    console.log("Calling Gemini API with streaming...");
     
-    // call Gemini API - without streaming for now
+    // Use streaming response
     try {
-      const result = await model.generateContent({
-        contents: [{ role: "user", parts }]
+      // Create a new ReadableStream
+      const stream = new ReadableStream({
+        async start(controller) {
+          // Call Gemini API with streaming
+          const streamingResult = await model.generateContentStream({
+            contents: [{ role: "user", parts }]
+          });
+          
+          // Process each chunk as it arrives
+          for await (const chunk of streamingResult.stream) {
+            const chunkText = chunk.text();
+            if (chunkText) {
+              // Send the chunk to the client
+              controller.enqueue(new TextEncoder().encode(JSON.stringify({ chunk: chunkText }) + "\n"));
+            }
+          }
+          
+          controller.close();
+        },
+        cancel() {
+          console.log("Stream was cancelled by the client");
+        }
       });
       
-      const response = result.response.text();
-      console.log("Got response from Gemini:", response.substring(0, 100) + "...");
-      
-      return NextResponse.json({ response });
+      // Return a streaming response
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive"
+        }
+      });
     } catch (geminiError) {
       console.error("Gemini API error:", geminiError);
       return NextResponse.json(
