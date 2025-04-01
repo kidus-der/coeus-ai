@@ -10,7 +10,7 @@ Coeus AI is an interactive educational assistant that allows users to upload PDF
 
 ## Features
 
-- **PDF Document Processing**: Upload and interact with PDF documents up to 10MB in size
+- **PDF Document Processing**: Upload and interact with PDF documents up to 25MB in size
 - **AI-Powered Chat Interface**: Ask questions about your documents and receive intelligent responses
 - **Toolbox with Educational Features**:
   - Generate comprehensive study plans
