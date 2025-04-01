@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from 'sonner';
+import { ArrowLeft } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -80,6 +81,12 @@ export default function ProfilePage() {
           name: values.name,
         },
       });
+      
+      // Update the form with the new values to reflect changes immediately
+      form.reset({
+        name: values.name,
+        email: session?.user?.email || '',
+      });
 
       toast.success('Profile updated successfully');
     } catch (error) {
@@ -98,48 +105,61 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container max-w-2xl py-12">
-      <h1 className="text-3xl font-bold mb-8">Your Profile</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4">
+      <div className="w-full max-w-md">
+        <div className="flex items-center mb-6">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="mr-2 p-0 h-8 w-8" 
+            onClick={() => router.back()}
+            aria-label="Go back"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-3xl font-bold">Your Profile</h1>
+        </div>
 
-      <div className="bg-card rounded-lg p-6 shadow-sm">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <div className="bg-card rounded-lg p-8 shadow-md border border-gray-100 dark:border-gray-800">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} className="w-full" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input {...field} disabled />
-                  </FormControl>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Email cannot be changed
-                  </p>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled className="w-full" />
+                    </FormControl>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Email cannot be changed
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Saving...' : 'Save changes'}
-            </Button>
-          </form>
-        </Form>
+              <Button type="submit" disabled={isLoading} className="w-full">
+                {isLoading ? 'Saving...' : 'Save changes'}
+              </Button>
+            </form>
+          </Form>
+        </div>
       </div>
     </div>
   );
