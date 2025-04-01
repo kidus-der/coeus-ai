@@ -14,6 +14,57 @@ Coeus AI is an interactive educational assistant that allows users to upload PDF
 - **Database**: Prisma ORM with SQLite for user data storage
 - **Password Hashing**: bcryptjs for secure password storage
 
+## Routing Structure
+
+Coeus AI uses Next.js App Router for page routing and navigation. Here's a comprehensive overview of the application's routing structure:
+
+### Public Pages
+- **Home Page** (`/`): The main application interface with PDF upload, chat, and toolbox functionality
+- **About Page** (`/about`): Information about Coeus AI, its purpose, and key features
+- **Contact Page** (`/contact`): Developer contact information and social media links
+- **Authentication Pages**:
+  - Login Page (`/auth/login`): User login with email and password
+  - Registration Page (`/auth/register`): New user registration
+  - Error Page (`/auth/error`): Authentication error handling
+
+### Protected Pages
+- **Profile Page** (`/profile`): User profile management (requires authentication)
+
+### API Routes
+- **Authentication API**:
+  - NextAuth API (`/api/auth/[...nextauth]`): Handles authentication flows
+  - Registration API (`/api/auth/register`): Handles user registration
+- **Chat API** (`/api/chat`): Processes chat messages and AI responses
+- **PDF Upload API** (`/api/upload-pdf`): Handles PDF file uploads
+- **User Profile API** (`/api/user/profile`): Manages user profile updates
+
+### Navigation Implementation
+- The Header component (`/src/components/Header.tsx`) provides the main navigation structure:
+  - Logo links to the home page
+  - Navigation links to Home, About, and Contact pages
+  - Authentication status determines available options:
+    - Unauthenticated users see Sign In and Sign Up buttons
+    - Authenticated users see a user dropdown with Profile and Sign Out options
+
+### Route Protection
+- Middleware (`/src/middleware.ts`) handles route protection:
+  - Public routes (`/about`, `/contact`, `/auth/*`, etc.) are accessible to all users
+  - Protected routes (like `/profile` and the main app `/`) require authentication
+  - Unauthenticated users attempting to access protected routes are redirected to the login page
+  - After successful authentication, users are redirected to their originally requested page via callback URL
+
+### Authentication Flow
+- Login process:
+  1. User enters credentials on the login page
+  2. Credentials are validated against the database
+  3. Upon successful authentication, a session is created
+  4. User is redirected to the requested page or home page
+- Registration process:
+  1. User enters details on the registration page
+  2. Form validation ensures data integrity
+  3. User data is stored in the database with hashed password
+  4. User is redirected to the login page or automatically signed in
+
 ## Key Components
 
 ### 1. PDF Viewer
@@ -122,6 +173,8 @@ The authentication API includes:
 - **Protected Routes**: Middleware ensures only authenticated users can access protected content
 - **Form Validation**: Client-side validation using Zod schema validation
 - **Error Handling**: Comprehensive error handling for authentication failures
+- **Route Protection**: Middleware-based route protection with callback URL redirection
+- **Authentication Flow**: Complete login and registration flow with session management
 
 ### State Management
 - **Message History**: The application maintains a message history with unique IDs for each message.
