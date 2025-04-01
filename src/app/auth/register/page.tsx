@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -76,17 +76,29 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* Theme Toggle in top right */}
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="rounded-full overflow-hidden w-24 h-24 bg-background flex items-center justify-center">
+            <div className="relative rounded-full overflow-hidden w-24 h-24 bg-background flex items-center justify-center">
               <Image 
                 src="/coeus-logo-dark-mode.svg" 
                 alt="Coeus Logo" 
                 width={80} 
                 height={80} 
-                className="object-contain"
+                className="absolute transition-opacity duration-300 dark:opacity-100 opacity-0 object-contain"
+              />
+              <Image 
+                src="/coeus-logo-light-mode.svg" 
+                alt="Coeus Logo" 
+                width={80} 
+                height={80} 
+                className="absolute transition-opacity duration-300 dark:opacity-0 opacity-100 object-contain"
               />
             </div>
           </div>

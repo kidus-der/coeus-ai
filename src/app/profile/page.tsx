@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -105,7 +106,12 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4">
+    <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4 relative">
+      {/* Theme Toggle in top right */}
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      
       <div className="w-full max-w-md">
         <div className="flex items-center mb-6">
           <Button 
