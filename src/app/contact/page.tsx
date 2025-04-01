@@ -1,29 +1,24 @@
 'use client';
 
-import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
+import { Header } from '@/components/Header';
 
 export default function ContactPage() {
   const router = useRouter();
+  const { theme } = useTheme();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4">
-      <div className="w-full max-w-3xl">
-        <div className="flex items-center mb-6">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="mr-2 p-0 h-8 w-8" 
-            onClick={() => router.back()}
-            aria-label="Go back"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-3xl font-bold">Contact</h1>
-        </div>
+    <>
+      <Header />
+      <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4">
+        <div className="w-full max-w-3xl">
+          <div className="flex items-center mb-6">
+            <h1 className="text-3xl font-bold">Contact</h1>
+          </div>
 
         <div className="bg-card rounded-lg p-8 shadow-md border border-gray-100 dark:border-gray-800">
           <div className="flex flex-col items-center text-center space-y-6">
@@ -68,13 +63,22 @@ export default function ContactPage() {
                 rel="noopener noreferrer"
                 className="transition-transform hover:scale-110 duration-300"
               >
-                <Image 
-                  src="/github.svg" 
-                  alt="GitHub" 
-                  width={42} 
-                  height={42} 
-                  className="hover:opacity-80 transition-opacity"
-                />
+                <div className="relative w-[42px] h-[42px]">
+                  <Image 
+                    src="/github-light.svg" 
+                    alt="GitHub" 
+                    width={42} 
+                    height={42} 
+                    className="absolute transition-opacity duration-300 dark:opacity-100 opacity-0 hover:opacity-80"
+                  />
+                  <Image 
+                    src="/github.svg" 
+                    alt="GitHub" 
+                    width={42} 
+                    height={42} 
+                    className="absolute transition-opacity duration-300 dark:opacity-0 opacity-100 hover:opacity-80"
+                  />
+                </div>
               </Link>
             </div>
 
@@ -94,6 +98,7 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
