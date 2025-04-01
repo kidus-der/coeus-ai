@@ -34,13 +34,22 @@ export function Header() {
       <div className="container flex h-16 items-center justify-between">
         {/* Logo and App Name (Left) */}
         <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/coeus-logo-dark-mode.svg"
-            alt="Coeus AI Logo"
-            width={50}
-            height={50}
-            className="rounded-full" // Make it a circle
-          />
+          <div className="relative w-[50px] h-[50px] rounded-full overflow-hidden">
+            <Image
+              src="/coeus-logo-dark-mode.svg"
+              alt="Coeus AI Logo"
+              width={50}
+              height={50}
+              className="absolute transition-opacity duration-300 dark:opacity-100 opacity-0 rounded-full" 
+            />
+            <Image
+              src="/coeus-logo-light-mode.svg"
+              alt="Coeus AI Logo"
+              width={50}
+              height={50}
+              className="absolute transition-opacity duration-300 dark:opacity-0 opacity-100 rounded-full"
+            />
+          </div>
           <span className="font-bold text-lg">Coeus</span>
         </Link>
 
