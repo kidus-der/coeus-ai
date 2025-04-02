@@ -36,11 +36,24 @@ export async function POST(req: NextRequest) {
     parts.push({ text: prompt });
     
     // add PDF content if available
-    if (body.pdfData?.base64) {
-      parts.push({
-        inlineData: {
-          data: body.pdfData.base64,
-          mimeType: "application/pdf"
+    if (body.pdfFiles && body.pdfFiles.length > 0) {
+      // Add information about which PDFs we're using
+      const pdfNames = body.pdfFiles.map(pdf => pdf.name).join('", "');
+      const pdfContext = body.pdfFiles.length > 1 
+        ? `I'm analyzing multiple PDFs: "${pdfNames}". ` 
+        : `I'm analyzing the PDF: "${pdfNames}". `;
+      
+      parts[0].text = pdfContext + parts[0].text;
+      
+      // Add each PDF to the parts array
+      body.pdfFiles.forEach(pdf => {
+        if (pdf.base64) {
+          parts.push({
+            inlineData: {
+              data: pdf.base64,
+              mimeType: "application/pdf"
+            }
+          });
         }
       });
     }
@@ -99,9 +112,22 @@ export async function POST(req: NextRequest) {
 
 // get predefined prompts for toolbox buttons
 function getToolboxPrompt(toolType, documentName) {
-  const docContext = documentName 
-    ? `the uploaded document "${documentName}"` 
-    : "the uploaded document";
+  // Handle multiple document names
+  let docContext;
+  if (Array.isArray(documentName)) {
+    if (documentName.length > 1) {
+      const docNames = documentName.join('", "');
+      docContext = `the uploaded documents "${docNames}"`;
+    } else if (documentName.length === 1) {
+      docContext = `the uploaded document "${documentName[0]}"`;
+    } else {
+      docContext = "the uploaded document";
+    }
+  } else {
+    docContext = documentName 
+      ? `the uploaded document "${documentName}"` 
+      : "the uploaded document";
+  }
   
   switch (toolType) {
     case "studyPlan":
