@@ -279,7 +279,7 @@ export function MultiPdfViewer({ onPdfUpload, maxFiles = 3 }: MultiPdfViewerProp
   };
 
   // Get the active PDF file
-  const activePdf = pdfFiles.find((pdf) => pdf.id === activeTabId);
+  // const activePdf = pdfFiles.find((pdf) => pdf.id === activeTabId);
 
   // Handle opening the remove PDF dialog
   const openRemoveDialog = () => {

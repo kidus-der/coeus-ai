@@ -27,7 +27,7 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null); // Used in onSubmit function
+  const [error, setError] = useState<string | null>(null); // Used for error display
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({

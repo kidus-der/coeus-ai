@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTheme } from 'next-themes';
+// import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
 import { ScrollArea } from '@/components/ui/scroll-area';
