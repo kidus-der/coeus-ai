@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { Header } from "@/components/Header";
-import { PdfViewer } from "@/components/PDFViewer/PDFViewer";
+import { MultiPdfViewer } from "@/components/PDFViewer/MultiPDFViewer";
+import { PDFSelector } from "@/components/PDFViewer/PDFSelector";
 import { ThemeProvider } from "@/components/theme-provider";
 import {
   ChatBubble,
@@ -34,12 +35,18 @@ interface Message {
   promptData?: {
     message?: string;
     toolType?: string;
-    pdfData?: any;
+    pdfIds?: string[];
   };
 }
 
+interface PDFFile {
+  id: string;
+  name: string;
+  base64: string;
+}
+
 export default function Home() {
-  const [pdfData, setPdfData] = useState(null);
+  const [pdfFiles, setPdfFiles] = useState<PDFFile[]>([]);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
@@ -49,6 +56,8 @@ export default function Home() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPdfSelectorOpen, setIsPdfSelectorOpen] = useState(false);
+  const [currentToolType, setCurrentToolType] = useState<string | undefined>();
   const scrollRef = useRef(null);
   
   // define action icons
@@ -66,30 +75,43 @@ export default function Home() {
   }, [messages]);
   
   // handle PDF upload or removal
-  const handlePdfUpload = (data) => {
-    setPdfData(data);
+  const handlePdfUpload = (data: PDFFile[]) => {
+    setPdfFiles(data);
     
-    if (data === null) {
-      // PDF was removed, add a message indicating this
+    if (data.length === 0) {
+      // All PDFs were removed, add a message indicating this
       setMessages((prevMessages) => [
         ...prevMessages,
         {
           id: `pdf-removed-${Date.now()}`,
           role: "assistant",
-          content: "The PDF has been removed. Please upload a new document to continue.",
+          content: "All PDFs have been removed. Please upload a new document to continue.",
         },
       ]);
-    } else {
-      // PDF was uploaded, add a welcome message
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: `pdf-welcome-${Date.now()}`,
-          role: "assistant",
-          content: `I've processed your document "${data.name}". You can ask me questions about it or use the toolbox buttons below to generate specific content.`,
-        },
-      ]);
+    } else if (data.length > pdfFiles.length) {
+      // New PDF was uploaded, add a welcome message
+      const newPdfs = data.filter(pdf => !pdfFiles.some(existingPdf => existingPdf.id === pdf.id));
+      if (newPdfs.length > 0) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: `pdf-welcome-${Date.now()}`,
+            role: "assistant",
+            content: `I've processed ${newPdfs.length > 1 ? 'your documents' : `your document "${newPdfs[0].name}"`}. You can ask me questions about ${newPdfs.length > 1 ? 'them' : 'it'} or use the toolbox buttons below to generate specific content.`,
+          },
+        ]);
+      }
     }
+  };
+  
+  // Handle PDF selection for toolbox functions
+  const handlePdfSelection = (selectedPdfIds: string[]) => {
+    const selectedPdfs = pdfFiles.filter(pdf => selectedPdfIds.includes(pdf.id));
+    
+    if (selectedPdfs.length === 0 || !currentToolType) return;
+    
+    // Now call the toolbox function with the selected PDFs
+    handleToolboxWithSelectedPdfs(currentToolType, selectedPdfIds);
   };
   
   // handle sending a message
@@ -110,6 +132,9 @@ export default function Home() {
     // Create a unique ID for the assistant message
     const assistantMessageId = `assistant-${Date.now()}`;
     
+    // If we have multiple PDFs and no specific selection, use all PDFs
+    const pdfIds = pdfFiles.map(pdf => pdf.id);
+    
     // Add an initial loading message from the assistant
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -120,7 +145,7 @@ export default function Home() {
         isLoading: true,
         promptData: {
           message: input,
-          pdfData: pdfData
+          pdfIds: pdfIds
         }
       },
     ]);
@@ -134,7 +159,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           message: input,
-          pdfData: pdfData,
+          pdfFiles: pdfFiles.filter(pdf => pdfIds.includes(pdf.id)),
         }),
       });
       
@@ -215,6 +240,33 @@ export default function Home() {
   
   // handle toolbox button clicks
   const handleToolboxClick = async (toolType) => {
+    // check if PDFs are uploaded
+    if (pdfFiles.length === 0) {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: `tool-no-pdf-${Date.now()}`,
+          role: "assistant",
+          content: "Please upload a PDF document first before using the toolbox features.",
+        },
+      ]);
+      return;
+    }
+    
+    // If we have multiple PDFs, open the PDF selector
+    if (pdfFiles.length > 1) {
+      setCurrentToolType(toolType);
+      setIsPdfSelectorOpen(true);
+      return;
+    }
+    
+    // If we only have one PDF, use it directly
+    const pdfIds = [pdfFiles[0].id];
+    handleToolboxWithSelectedPdfs(toolType, pdfIds);
+  };
+  
+  // Handle toolbox with selected PDFs
+  const handleToolboxWithSelectedPdfs = async (toolType, pdfIds) => {
     // Add user message
     const userMessage = {
       id: `tool-user-${Date.now()}`,
@@ -225,22 +277,11 @@ export default function Home() {
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setIsLoading(true);
     
-    // check if PDF is uploaded
-    if (!pdfData) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: `tool-no-pdf-${Date.now()}`,
-          role: "assistant",
-          content: "Please upload a PDF document first before using the toolbox features.",
-        },
-      ]);
-      setIsLoading(false);
-      return;
-    }
-    
     // Create a unique ID for the assistant message
     const assistantMessageId = `tool-response-${Date.now()}`;
+    
+    // Get the selected PDFs
+    const selectedPdfs = pdfFiles.filter(pdf => pdfIds.includes(pdf.id));
     
     // Add an initial loading message from the assistant
     setMessages((prevMessages) => [
@@ -252,7 +293,7 @@ export default function Home() {
         isLoading: true,
         promptData: {
           toolType: toolType,
-          pdfData: pdfData
+          pdfIds: pdfIds
         }
       },
     ]);
@@ -266,7 +307,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           toolType: toolType,
-          pdfData: pdfData,
+          pdfFiles: selectedPdfs,
         }),
       });
       
@@ -379,12 +420,15 @@ export default function Home() {
           // Call the API with the same prompt data
           (async () => {
             try {
-              const { message, toolType, pdfData } = messageToRegenerate.promptData;
+              const { message, toolType, pdfIds } = messageToRegenerate.promptData;
+              
+              // Get the selected PDFs
+              const selectedPdfs = pdfFiles.filter(pdf => pdfIds?.includes(pdf.id));
               
               // Determine which API call to make based on the prompt data
               const apiRequestBody = toolType 
-                ? { toolType, pdfData } 
-                : { message, pdfData };
+                ? { toolType, pdfFiles: selectedPdfs } 
+                : { message, pdfFiles: selectedPdfs };
               
               const response = await fetch("/api/chat", {
                 method: "POST",
@@ -512,20 +556,31 @@ export default function Home() {
     >
       <Header />
       <main className="container mx-auto p-4">
+        {/* PDF Selector Dialog */}
+        <PDFSelector
+          pdfFiles={pdfFiles}
+          isOpen={isPdfSelectorOpen}
+          setIsOpen={setIsPdfSelectorOpen}
+          onSelect={handlePdfSelection}
+          toolType={currentToolType}
+          multiSelect={true}
+        />
+        
         <ResizablePanelGroup
           direction="horizontal"
           className="min-h-[200px] border rounded-lg"
         >
           <ResizablePanel className="border-r">
-            <div className="h-[85vh] p-4 bg-gray-100">
-              <PdfViewer onPdfUpload={handlePdfUpload} />
+            <div className="h-[85vh] p-4 bg-gray-100 flex flex-col">
+              {/* PDF viewer content */}
+              <MultiPdfViewer onPdfUpload={handlePdfUpload} maxFiles={3} />
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel>
             <div className="h-[85vh] p-4 bg-gray-100 flex flex-col">
               {/* Chat Interface */}
-              <ScrollArea className="h-[75vh]" ref={scrollRef}>
+              <ScrollArea className="h-[85vh]" ref={scrollRef}>
                 <ChatMessageList>
                   {messages.map((message) => (
                     <ChatBubble key={message.id} layout="ai">
