@@ -3,14 +3,15 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTheme } from 'next-themes';
+// import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function ContactPage() {
   const router = useRouter();
-  const { theme } = useTheme();
+  // Theme is not currently used but might be needed for future theme-specific features
+  // const { theme } = useTheme();
 
   return (
     <>

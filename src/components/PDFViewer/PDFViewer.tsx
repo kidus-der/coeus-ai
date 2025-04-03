@@ -102,7 +102,7 @@ export function PdfViewer({ onPdfUpload }: PdfViewerProps) {
         toast("Error uploading PDF. Please try again.");
       }
     },
-    [onPdfUpload]
+    [onPdfUpload, MAX_FILE_SIZE]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -128,7 +128,7 @@ export function PdfViewer({ onPdfUpload }: PdfViewerProps) {
     toast("PDF removed. You can now upload a new PDF document.");
   };
 
-  const handleError = (error: any) => {
+  const handleError = (error: Error | unknown) => {
     console.error("Error loading PDF:", error);
     toast(
       "Uh oh! Something went wrong. Failed to load PDF. Please ensure it is a valid PDF file."
