@@ -18,7 +18,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PDFSelector } from "./PDFSelector";
 
 // set the workerSrc (required by react-pdf)
@@ -227,7 +227,7 @@ export function MultiPdfViewer({ onPdfUpload, maxFiles = 3 }: MultiPdfViewerProp
         );
       }
     },
-    [pdfFiles, maxFiles, onPdfUpload]
+    [pdfFiles, maxFiles, onPdfUpload, MAX_FILE_SIZE]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -271,7 +271,7 @@ export function MultiPdfViewer({ onPdfUpload, maxFiles = 3 }: MultiPdfViewerProp
     toast(`Removed PDF: ${pdfToRemove?.name || "document"}.`);
   };
 
-  const handleError = (error: any) => {
+  const handleError = (error: Error | unknown) => {
     console.error("Error loading PDF:", error);
     toast.error(
       "Uh oh! Something went wrong. Failed to load PDF. Please ensure it is a valid PDF file."

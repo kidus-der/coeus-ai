@@ -27,7 +27,7 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // Used in onSubmit function
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -142,7 +142,7 @@ export default function LoginPage() {
 
         <div className="text-center text-sm">
           <p>
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/auth/register" className="font-medium text-primary hover:underline">
               Sign up
             </Link>

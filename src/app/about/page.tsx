@@ -88,7 +88,7 @@ export default function AboutPage() {
                   Coeus is built with students and researchers in mind. We understand the challenges of processing large amounts of information and have created a tool that makes this process more efficient and effective. Our AI assistant helps you focus on understanding and applying knowledge rather than just collecting it.
                 </p>
                 <p className="text-muted-foreground">
-                  Whether you're a student preparing for exams, a researcher analyzing papers, or a professional staying updated in your field, Coeus adapts to your needs and helps you achieve your learning goals faster.
+                  Whether you&apos;re a student preparing for exams, a researcher analyzing papers, or a professional staying updated in your field, Coeus adapts to your needs and helps you achieve your learning goals faster.
                 </p>
               </div>
 

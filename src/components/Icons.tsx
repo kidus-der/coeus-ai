@@ -10,7 +10,7 @@ import {
 
 interface IconProps {
   classname?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export const SunIcon = ({ className, ...rest }: IconProps) => (

@@ -3,7 +3,6 @@ import { useState } from "react";
 import { File } from "lucide-react";
 import {
   Command,
-  CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
