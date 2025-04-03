@@ -68,6 +68,9 @@ Coeus AI uses Next.js App Router for page routing and navigation. Here's a compr
 ## Key Components
 
 ### 1. PDF Viewer
+The application includes two PDF viewer components:
+
+#### Single PDF Viewer
 The PDF Viewer component (`/src/components/PDFViewer/PDFViewer.tsx`) handles:
 - PDF file uploads with drag-and-drop functionality
 - File validation (PDF format, size limit of 10MB)
@@ -81,6 +84,22 @@ Implementation notes:
 - Includes error handling for invalid files
 - Provides visual feedback during drag-and-drop operations
 - The PDF removal feature includes a toast notification to confirm removal and reset of the viewer state
+
+#### Multiple PDF Viewer
+The MultiPdfViewer component (`/src/components/PDFViewer/MultiPDFViewer.tsx`) extends the functionality to support multiple PDFs:
+- Supports uploading and managing up to 3 PDF files simultaneously (configurable via maxFiles prop)
+- Tab-based navigation between uploaded PDFs
+- Individual pagination controls for each PDF
+- Ability to add new PDFs (up to the maximum limit)
+- Ability to remove specific PDFs via a selection dialog
+- Increased file size limit of 25MB per PDF
+
+Implementation notes:
+- Uses the PDFSelector component (`/src/components/PDFViewer/PDFSelector.tsx`) for PDF selection when removing PDFs
+- Maintains state for each PDF including current page, total pages, and base64 data
+- Provides visual feedback during drag-and-drop operations
+- Includes toast notifications for PDF uploads and removals
+- Supports direct page number input for quick navigation within PDFs
 
 ### 2. Chat Interface
 The main chat interface (`/src/app/page.tsx`) includes:
@@ -157,14 +176,18 @@ The authentication API includes:
 ## Technical Considerations
 
 ### PDF Handling
-- **Size Limitations**: The application has a 10MB limit for PDF uploads to prevent performance issues and stay within API limits.
+- **Size Limitations**: The application has a 25MB limit for PDF uploads to prevent performance issues and stay within API limits.
 - **Base64 Encoding**: PDFs are converted to base64 for transmission to the Gemini API, which increases the payload size by approximately 33%.
 - **PDF Rendering**: The application uses react-pdf with worker configuration to render PDFs client-side.
-- **PDF Removal**: The application allows users to remove the current PDF and upload a new one without refreshing the page, improving user experience when working with multiple documents.
+- **Multiple PDF Support**: The application supports uploading and managing up to 3 PDF documents simultaneously, with tab-based navigation between documents.
+- **PDF Selection**: When using toolbox features with multiple PDFs, users can select which PDFs to include in the analysis via a selection dialog.
+- **PDF Management**: Users can add new PDFs (up to the configured limit) or remove specific PDFs without refreshing the page, improving user experience when working with multiple documents.
 
 ### AI Integration
 - **Model Selection**: The application uses the Gemini 2.0 Flash model for optimal performance and cost.
 - **Multimodal Inputs**: The API can process both text and PDF inputs simultaneously.
+- **Multiple PDF Analysis**: The API can process multiple PDFs in a single request, providing context about which PDFs are being analyzed.
+- **PDF Selection for Tools**: When using toolbox features with multiple PDFs, the API constructs appropriate prompts based on the selected PDFs.
 - **Streaming Responses**: Implements a streaming pattern for real-time AI responses, improving user experience.
 
 ### Authentication & Security

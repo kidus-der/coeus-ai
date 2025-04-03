@@ -10,18 +10,22 @@ Coeus AI is an interactive educational assistant that allows users to upload PDF
 
 ## Features
 
+- **Multiple PDF Support**: Upload and interact with up to 3 PDF documents simultaneously
 - **PDF Document Processing**: Upload and interact with PDF documents up to 25MB in size
+- **Tab-based PDF Navigation**: Easily switch between multiple uploaded PDFs
 - **AI-Powered Chat Interface**: Ask questions about your documents and receive intelligent responses
+- **Multi-document Analysis**: AI can analyze and respond to queries across multiple PDFs
 - **Toolbox with Educational Features**:
   - Generate comprehensive study plans
   - Create quick summaries of document content
   - Get detailed explanations of complex topics
   - Generate practice questions to test understanding
+  - Select specific PDFs for each tool operation
 - **User Authentication**: Secure login and registration system with protected routes
 - **Responsive Design**: Works on desktop and mobile devices
 - **Dark/Light Mode**: Choose your preferred theme
 - **Real-time Streaming Responses**: See AI responses as they're generated
-- **PDF Removal**: Easily remove the current PDF and upload a new one without refreshing
+- **PDF Management**: Add new PDFs or remove specific documents without refreshing
 - **User Profile Management**: Update user information through a dedicated profile page
 - **About Page**: Learn about the application's purpose and features
 - **Contact Page**: Connect with the developer through social media links
