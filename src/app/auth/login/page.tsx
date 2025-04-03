@@ -27,7 +27,7 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null); // Used for error display
+  const [errorMessage, setError] = useState<string | null>(null); // Renamed to avoid ESLint warning
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -96,10 +96,10 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {error && (
+        {errorMessage && (
           <div className="rounded-md bg-destructive/15 p-3">
             <div className="flex">
-              <div className="text-sm font-medium text-destructive">{error}</div>
+              <div className="text-sm font-medium text-destructive">{errorMessage}</div>
             </div>
           </div>
         )}

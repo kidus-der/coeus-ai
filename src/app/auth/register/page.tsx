@@ -32,7 +32,7 @@ const formSchema = z.object({
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null); // Used for error display
+  const [errorMessage, setError] = useState<string | null>(null); // Renamed to avoid ESLint warning
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -111,9 +111,9 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            {error && (
+            {errorMessage && (
               <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
-                {error}
+                {errorMessage}
               </div>
             )}
 
