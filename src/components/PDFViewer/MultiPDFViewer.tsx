@@ -384,12 +384,23 @@ export function MultiPdfViewer({ onPdfUpload, maxFiles = 3 }: MultiPdfViewerProp
                           <div className="flex items-center gap-1">
                             <input
                               type="text"
-                              value={pageInput !== "" ? pageInput : pdf.currentPage}
+                              value={pageInput !== "" ? pageInput : pdf.currentPage.toString()}
                               onChange={handlePageInputChange}
                               onFocus={() => setPageInput("")}
                               onBlur={() => {
+                                // When user leaves the field without submitting, revert to showing current page
                                 if (pageInput === "") {
+                                  // If they didn't enter anything, just show current page
                                   setPageInput("");
+                                } else {
+                                  // If they entered something but didn't press Enter, apply the change
+                                  const pageNumber = parseInt(pageInput, 10);
+                                  if (!isNaN(pageNumber)) {
+                                    goToPage(pdf.id, pageNumber);
+                                  } else {
+                                    // Reset if invalid input
+                                    setPageInput("");
+                                  }
                                 }
                               }}
                               onKeyDown={(e) => handlePageInputKeyDown(e, pdf.id)}
