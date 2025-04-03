@@ -189,6 +189,64 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 - `NEXTAUTH_SECRET`: Secret key for NextAuth.js JWT encryption
 - `NEXTAUTH_URL`: Base URL for NextAuth.js callbacks (in production)
 
+## Contribution Guidelines
+
+We welcome contributions to Coeus AI! Here's how you can contribute:
+
+1. **Fork the Repository**: Create your own fork of the project
+2. **Create a Branch**: Make your changes in a new branch
+3. **Follow Code Style**: Match the existing code style and conventions
+4. **Write Tests**: Add tests for new features when applicable
+5. **Submit a Pull Request**: Open a PR with a clear description of your changes
+
+### Development Workflow
+
+1. Set up your local development environment following the installation instructions
+2. Make your changes with clear, descriptive commit messages
+3. Test your changes thoroughly before submitting
+4. Document any new features or changes to existing functionality
+
+## Troubleshooting
+
+### Common Issues
+
+1. **PDF Upload Failures**
+   - Ensure the PDF is under the 25MB size limit
+   - Check that the file is a valid PDF format
+   - Try a different browser if issues persist
+
+2. **Authentication Problems**
+   - Clear browser cookies and try again
+   - Ensure your email and password meet the requirements
+   - Check that the database connection is working properly
+
+3. **AI Response Errors**
+   - Verify your Gemini API key is valid and has sufficient quota
+   - Check your internet connection
+   - Try with a smaller or different PDF if the current one is causing issues
+
+4. **Performance Issues**
+   - Large PDFs may cause slower performance
+   - Multiple concurrent users can affect response times
+   - Check system resources if hosting the application yourself
+
+### Getting Help
+
+If you encounter issues not covered here, please open an issue on the GitHub repository with:
+- A clear description of the problem
+- Steps to reproduce the issue
+- Any relevant error messages or screenshots
+
+## Performance Considerations
+
+- **PDF Size**: Larger PDFs require more memory and processing power
+- **Concurrent Users**: The application performance may degrade with many simultaneous users
+- **API Rate Limits**: Be aware of Google Gemini API rate limits in production
+- **Database Scaling**: Consider migrating to a more robust database for production use
+- **Caching**: Implement caching strategies for frequently accessed data
+- **Server Resources**: Ensure adequate CPU and memory for handling PDF processing
+- **Network Bandwidth**: Streaming responses require stable network connections
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
