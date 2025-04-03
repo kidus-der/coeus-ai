@@ -85,3 +85,6 @@ logs
 *.swp
 *.swo
 *~
+
+# handover
+HANDOVER.md
