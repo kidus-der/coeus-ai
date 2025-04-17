@@ -1,7 +1,7 @@
 # Coeus AI
 
 <div align="center">
-  <img src="./public/coeus-logo-dark-mode.svg" alt="Coeus AI Logo" width="200" />
+  <img src="./public/coeus-logo-light-mode.svg" alt="Coeus AI Logo" width="200" />
 </div>
 
 ## Overview
