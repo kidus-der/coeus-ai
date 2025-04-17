@@ -4,6 +4,20 @@
   <img src="./public/coeus-logo-dark-mode.svg" alt="Coeus AI Logo" width="200" />
 </div>
 
+## Screenshots
+<div>
+  <img src="./public/screenshot-1.png" width="500">
+  <img src="./public/screenshot-2.png" width="500">
+  <img src="./public/screenshot-3.png" width="500">
+  <img src="./public/screenshot-4.png" width="500">
+  <img src="./public/screenshot-7.png" width="500">
+  <img src="./public/screenshot-8.png" width="500">
+  <img src="./public/screenshot-9.png" width="500">
+  <img src="./public/screenshot-5.png" width="500">
+  <img src="./public/screenshot-6.png" width="500">
+  
+</div>
+
 ## Overview
 
 Coeus AI is an interactive educational assistant that allows users to upload PDF documents and interact with them through an AI-powered chat interface. The application provides various tools to help users understand and learn from their documents, including generating study plans, summaries, detailed explanations, and practice questions. With a user-friendly interface, responsive design, and secure authentication system, Coeus AI aims to revolutionize the way students and professionals learn from their documents.
